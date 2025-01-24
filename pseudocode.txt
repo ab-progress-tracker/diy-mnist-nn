@@ -1,0 +1,36 @@
+class neural network
+    create the layers (input size=784, hidden size=16, output size=10)
+    add weights and biases 
+
+    activation function 
+        (sigmoid/relu/etc for hidden) 
+        (softmax for output)
+
+    create loss function
+
+    BACKPROP/GRADIENT DESCENT
+        forward pass
+            do activations for layers
+            apply softmax to get prediction
+        errors calculation
+            loss between prediction and actual labels 
+        back pass
+            calculate the gradient of the loss function for hidden & output layers
+        weight update
+            gradient descent
+
+    uhhh  do like 5 epochs
+
+    test on DEV SET
+        get accuracy(maybe confusion matrix?)
+
+    SAVE nn using pickle (weights, architecture)
+
+-------diff file that calls the nn-------
+
+pick a random img from test set 
+ask nn what this img is
+
+plt.imshow(img,cmap='binary')
+plt.title(f"Prediction: {prediction}")  
+plt.show()
