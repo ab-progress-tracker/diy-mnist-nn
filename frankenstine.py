@@ -12,20 +12,38 @@ test_lbl = np.float16(data['y_test'][:,0])
 
 data.close()
 
-dev_percentage = 0.3
+# dev_size = int(len(test_img) * 0.3) # takes 30% of the data from the 'x_test' set
 
-dev_size = int(len(test_img) * dev_percentage)
+# print(len(test_img))
 
-print(len(test_img))
+# dev_img = test_img[:dev_size]
+# dev_lbl = test_lbl[:dev_size]
 
-dev_img = test_img[:dev_size]
-dev_lbl = test_lbl[:dev_size]
+# test_img = test_img[dev_size:]
+# test_lbl = test_lbl[dev_size:]
 
-test_img = test_img[dev_size:]
-test_lbl = test_lbl[dev_size:]
+# print(f"Dev set size: {len(dev_img)}, {len(dev_lbl)}")
+# print(f"Actual test set size: {len(test_img)}, {len(test_lbl)}")
 
-print(f"Dev set size: {len(dev_img)}, {len(dev_lbl)}")
-print(f"Actual test set size: {len(test_img)}, {len(test_lbl)}")
+# Raw logits (before applying softmax)
+logits = np.array([3.0, 2.0, 1.0, 0.1])
+
+# Find the index of the largest logit (class with highest raw score)
+predicted_class = np.argmax(logits)
+
+print(f"Predicted class (without softmax): {predicted_class}")
+
+e = np.exp(1)
+
+
+a_o = (e**logits)/np.sum(e**logits) 
+a_alt_o = (logits)/np.sum(logits)
+print(a_o, "softmax")
+print(np.sum(a_o))
+print(a_alt_o, "no softmax")
+print(np.sum(a_alt_o))
+
+"""we can see very clearly that softmax exaggerates the confidence for larger values"""
 
 
 # rnum=random.randint(0,9999)
