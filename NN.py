@@ -33,7 +33,21 @@ class NeuralNetwork:
             a_h = np.maximum(0, z_h) # it can't just be max() bc it's a vector. oops
 
             z_o = np.dot(a_h, self.weights_hidden_output) + self.biases_hidden_output
-            e = np.exp(1) # euler's number
-            a_o = np.exp(z_o)/np.sum(np.exp(z_o)) # the results were being weird when i tried printing a_o for some x and it turned out that i was raising e to the power of the entire vector. oops
+            a_o = np.exp(z_o)/np.sum(np.exp(z_o)) 
 
             return a_o
+
+nn = NeuralNetwork()
+
+rnum = random.randint(0, len(train_img) - 1)
+
+img = train_img[rnum]
+
+lbl = train_lbl[rnum]
+
+prediction = np.argmax(nn.forward(img))
+
+img = img.reshape(28, 28) 
+plt.imshow(img,cmap='binary')
+plt.title(f"Predicted: {prediction}\nTrue label: {lbl}")  
+plt.show()
