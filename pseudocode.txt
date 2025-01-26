@@ -9,8 +9,9 @@ class neural network
                 it dosen't maintain relative confidence; if one value is super huge, it should weigh more than what it actually is if you take normal probability
                 basically we want softmax because it exaggerates the values and makes our nn feel all nice and confident in its choices
 
-    log loss
-
+    cost function
+        (some_output - what the output SHOULD be (0 or one))^2
+        i'm pretty sure that's it unless i stupid 
 
     backprop
         output gradient
