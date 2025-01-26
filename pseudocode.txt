@@ -1,6 +1,9 @@
 class neural network
     initialize the layers (input size=784, hidden size=16, output size=10)
-    initialize weights and biases 
+    initialize weights as random and biases as zero
+
+    hot encode:
+        if you input me a seven, i give you 0 for one, 0 for two...1 for SEVEN...
 
     forward:
         activation function hidden----relu = max(0, z)
@@ -10,31 +13,30 @@ class neural network
                 basically we want softmax because it exaggerates the values and makes our nn feel all nice and confident in its choices
 
     cost function
-        (some_output - what the output SHOULD be (0 or one))^2
-        i'm pretty sure that's it unless i stupid 
-
+        sumof((softmax output - what i got from hot encode (0 or 1))^2)
+        source: 3b1b 
+    
     backprop
-        output gradient
-        hidden gradient w/ respect to output
+        gradient stuff, chain rule stuff... 
 
-        update weights and biases
+train it
+    for epoch in range somenumberidk:
+        get loss
+        do backprop stuff & update weights/biases
+        print: current epoch & accuracy
 
-    train it
-        uhhh  do like 5 epochs
+test on DEV SET
+    get accuracy(maybe confusion matrix? we'll see)
+    i don't really feel like doing this one and tbh for a nn of this complexity it's irrelavent so i prolly won't do it
 
-    test on DEV SET
-        get accuracy(maybe confusion matrix? we'll see)
-
-    predict when given an image
-        put it thru forward prop
-        use argmax to get the one which it's most confident with
-
-    SAVE nn using pickle (weights, biases, architecture,  etc)
+SAVE nn using pickle (weights, biases, architecture,  etc)
 
 -------diff file that calls the nn-------
 
 pick a random img from test set 
 ask nn what this img is
+
+prediction = np.argmax(nn.forward(img))
 
 plt.imshow(img,cmap='binary')
 plt.title(f"Prediction: {prediction}")  
