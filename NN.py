@@ -12,11 +12,11 @@ test_lbl = np.float16(data['y_test'][:,0])
 
 data.close()
 
-dev_img = test_img[:dev_size]
-dev_lbl = test_lbl[:dev_size]
+# dev_img = test_img[:dev_size]
+# dev_lbl = test_lbl[:dev_size]
 
-test_img = test_img[dev_size:]
-test_lbl = test_lbl[dev_size:]
+# test_img = test_img[dev_size:]
+# test_lbl = test_lbl[dev_size:]
 
 class NeuralNetwork:
         def __init__(self):
@@ -30,14 +30,10 @@ class NeuralNetwork:
         def forward(self, x): # x is some input pixel
             z_h = np.dot(x, self.weights_input_hidden) + self.biases_input_hidden # np.dot --- matrix multiplication
             # activation function for hidden layer ---- ReLU
-            a_h = max(0, z_h)
+            a_h = np.maximum(0, z_h) # it can't just be max() bc it's a vector. oops
 
             z_o = np.dot(a_h, self.weights_hidden_output) + self.biases_hidden_output
             e = np.exp(1) # euler's number
-            a_o = (e**z_o)/np.sum(e**z_o) # this is softmax. 
+            a_o = np.exp(z_o)/np.sum(np.exp(z_o)) # the results were being weird when i tried printing a_o for some x and it turned out that i was raising e to the power of the entire vector. oops
 
-            return a_o 
-
-
-
-            
+            return a_o
