@@ -42,7 +42,7 @@ class NeuralNetwork:
 
             return a_o
 
-        def cost(self, y_pred, y_true):
+        def loss(self, y_pred, y_true):
             cost = np.sum((y_pred-y_true)**2)
             return cost 
 
@@ -52,7 +52,7 @@ nn = NeuralNetwork()
 somenumberidk = 3
 
 for epoch in range(somenumberidk):
-    avg_loss=0
+    sumloss = 0
     for i in range(len(train_img)):
         
         x = train_img[i]
@@ -61,10 +61,10 @@ for epoch in range(somenumberidk):
         y_pred = nn.forward(x)
         y_true = nn.hot_encode(y)
 
-        loss = nn.cost(y_pred, y_true)
-        avg_loss = avg_loss + loss
+        loss = nn.loss(y_pred, y_true)
+        sumloss += loss
 
         # add backprop stuff
 
-    print(f"Epoch {epoch+1}/{somenumberidk}, loss: {avg_loss/len(train_img)}")
+    print(f"Epoch {epoch+1}/{somenumberidk}, cost: {sumloss/len(train_img)}")
 
