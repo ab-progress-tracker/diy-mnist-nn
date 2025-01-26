@@ -27,11 +27,10 @@ class NeuralNetwork:
             self.weights_hidden_output = np.random.randn(16, 10) * 0.1
             self.biases_hidden_output = np.zeros(10) # sets all biases in output layer to 0... fn.
 
-        def hot_encode(self, labels, num_classes)
-            self.numclasses = 10
-            hot_encoded = np.eye(num_classes)[labels]
-
+        def hot_encode(self, y, numclasses=10):
+            hot_encoded = np.eye(numclasses)[y]
             return hot_encoded
+
 
         def forward(self, x): # x is some input pixel
             z_h = np.dot(x, self.weights_input_hidden) + self.biases_input_hidden # np.dot --- matrix multiplication
@@ -43,6 +42,26 @@ class NeuralNetwork:
 
             return a_o
 
-        def cost(self, y_pred, y_true)
-            cost = np.mean((y_pred-y_true)**2)
+        def cost(self, y_pred, y_true):
+            cost = np.sum((y_pred-y_true)**2)
             return cost 
+
+nn = NeuralNetwork()
+
+somenumberidk = 3
+
+for epoch in range(somenumberidk):
+    for i in range(len(train_img)):
+        
+        x = train_img[i]
+        y = int(train_lbl[i])
+
+        y_pred = nn.forward(x)
+        y_true = nn.hot_encode(y)
+
+        loss = nn.cost(y_pred, y_true)
+
+        # add backprop stuff
+
+    print(f"Epoch {epoch+1}/{somenumberidk}, accuraccy: {100*(1-loss)}")
+
