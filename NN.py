@@ -26,7 +26,13 @@ class NeuralNetwork:
             # weights/biases for hidden to output
             self.weights_hidden_output = np.random.randn(16, 10) * 0.1
             self.biases_hidden_output = np.zeros(10) # sets all biases in output layer to 0... fn.
-        
+
+        def hot_encode(self, labels, num_classes)
+            self.numclasses = 10
+            hot_encoded = np.eye(num_classes)[labels]
+
+            return hot_encoded
+
         def forward(self, x): # x is some input pixel
             z_h = np.dot(x, self.weights_input_hidden) + self.biases_input_hidden # np.dot --- matrix multiplication
             # activation function for hidden layer ---- ReLU
@@ -37,17 +43,6 @@ class NeuralNetwork:
 
             return a_o
 
-nn = NeuralNetwork()
-
-rnum = random.randint(0, len(train_img) - 1)
-
-img = train_img[rnum]
-
-lbl = train_lbl[rnum]
-
-prediction = np.argmax(nn.forward(img))
-
-img = img.reshape(28, 28) 
-plt.imshow(img,cmap='binary')
-plt.title(f"Predicted: {prediction}\nTrue label: {lbl}")  
-plt.show()
+        def cost(self, y_pred, y_true)
+            cost = np.mean((y_pred-y_true)**2)
+            return cost 
