@@ -31,7 +31,6 @@ class NeuralNetwork:
             hot_encoded = np.eye(numclasses)[y]
             return hot_encoded
 
-
         def forward(self, x): # x is some input pixel
             z_h = np.dot(x, self.weights_input_hidden) + self.biases_input_hidden # np.dot --- matrix multiplication
             # activation function for hidden layer ---- ReLU
@@ -39,15 +38,30 @@ class NeuralNetwork:
 
             z_o = np.dot(a_h, self.weights_hidden_output) + self.biases_hidden_output
             a_o = np.exp(z_o)/np.sum(np.exp(z_o)) 
-
             return a_o
 
         def loss(self, y_pred, y_true):
             cost = np.sum((y_pred-y_true)**2)
             return cost 
+        def derivatives(self):
+            d_relu = (z_h > 0) * 1
+            # d_softmax = i gotta read up on derivatives of vector functions i can't even lie
+
+            # derivative of cost function with respect to weight 2
+
+            # derivative of cost function with respect to bias 2
+
+            # derivative of cost function with respect to weight 1
+            
+            # derivative of cost function with respect to bias 1
+            
+
 
 
 nn = NeuralNetwork()
+
+z=nn.forward(10)
+print(z)
 
 somenumberidk = 3
 
