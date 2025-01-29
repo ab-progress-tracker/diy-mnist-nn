@@ -1,0 +1,8 @@
+    jacobian(s)
+        pick the ith position in index s
+            now pick the jth position in index z
+                if i == j
+                    j_m = s[i](1-s[j])
+                if i =/= j
+                    j_m = s[i](-s[j])
+        return j_m
