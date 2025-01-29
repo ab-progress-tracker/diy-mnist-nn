@@ -42,16 +42,29 @@ class NeuralNetwork:
 
         def loss(self, y_pred, y_true):
             cost = np.sum((y_pred-y_true)**2)
-            return cost 
-        def derivatives(self):
+            return cost
+
+        def softmax_derivative(self, a_o):
+            n = len(a_o)
+            s = a_o
+            j_m = np.zeros((n, n))
+
+            for i in range(n):
+                for j in range(n):
+                    if i == j:
+                        j_m[i, j] = s[i]*(1-s[j])
+                    else:
+                        j_m[i, j] = s[i]*(-s[j])
+            return j_m
+
+        def derivatives(self): # also other vars but i ain't putting em in yet because i'm Like that
             d_relu = (z_h > 0) * 1
-            jacobian = 0 # placeholder
 
-            dc_w2 = a_h*jacobian*2(a_o-y_true) # derivative of cost function wrt weight 2
+            dc_w2 = a_h*j_m*2(a_o-y_true) # derivative of cost function wrt weight 2
+            # yes ik i have to do matrix multiplication here. i'll get to it
+            dc_b2 = j_m*2(a_o-y_true) # derivative of cost function with respect to bias 2
 
-            dc_b2 = jacobian*2(a_o-y_true) # derivative of cost function with respect to bias 2
-
-            dc_a_h = w2*a_h*jacobian*2(a_o-y_true) # i'll need this later---dc wrt activation from hidden
+            dc_a_h = w2*a_h*j_m*2(a_o-y_true) # i'll need this later---dc wrt activation from hidden
 
             # derivative of cost function with respect to weight 1
 
