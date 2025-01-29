@@ -45,14 +45,16 @@ class NeuralNetwork:
             return cost 
         def derivatives(self):
             d_relu = (z_h > 0) * 1
-            # d_softmax = i gotta read up on derivatives of vector functions i can't even lie
+            jacobian = 0 # placeholder
 
-            # derivative of cost function with respect to weight 2
+            dc_w2 = a_h*jacobian*2(a_o-y_true) # derivative of cost function wrt weight 2
 
-            # derivative of cost function with respect to bias 2
+            dc_b2 = jacobian*2(a_o-y_true) # derivative of cost function with respect to bias 2
+
+            dc_a_h = w2*a_h*jacobian*2(a_o-y_true) # i'll need this later---dc wrt activation from hidden
 
             # derivative of cost function with respect to weight 1
-            
+
             # derivative of cost function with respect to bias 1
             
 
