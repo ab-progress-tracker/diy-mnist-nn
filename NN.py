@@ -12,19 +12,20 @@ test_lbl = np.float16(data['y_test'][:,0])
 
 data.close()
 
-# dev_img = test_img[:dev_size]
-# dev_lbl = test_lbl[:dev_size]
+dev_size = int(len(test_img) * 0.3)
+dev_img = test_img[:dev_size]
+dev_lbl = test_lbl[:dev_size]
 
-# test_img = test_img[dev_size:]
-# test_lbl = test_lbl[dev_size:]
+test_img = test_img[dev_size:]
+test_lbl = test_lbl[dev_size:]
 
 class NeuralNetwork:
         def __init__(self):
             # weights and biases connecting the input layer to the hidden layer
-            self.weights_input_hidden = np.random.randn(784, 16) * 0.1
-            self.biases_input_hidden = np.zeros(16) # sets all biases in hidden layer to 0... fn.
+            self.weights_input_hidden = np.random.randn(784, 32) * 0.01
+            self.biases_input_hidden = np.zeros(32) # sets all biases in hidden layer to 0... fn.
             # weights/biases for hidden to output
-            self.weights_hidden_output = np.random.randn(16, 10) * 0.1
+            self.weights_hidden_output = np.random.randn(32, 10) * 0.01
             self.biases_hidden_output = np.zeros(10) # sets all biases in output layer to 0... fn.
 
         def hot_encode(self, y, numclasses=10):
@@ -35,10 +36,12 @@ class NeuralNetwork:
             z_h = np.dot(x, self.weights_input_hidden) + self.biases_input_hidden # np.dot --- matrix multiplication
             # activation function for hidden layer ---- ReLU
             a_h = np.maximum(0, z_h) # it can't just be max() bc it's a vector. oops
-
+    
             z_o = np.dot(a_h, self.weights_hidden_output) + self.biases_hidden_output
-            a_o = np.exp(z_o)/np.sum(np.exp(z_o), axis = 0) 
-            return a_o
+            z_s = z_o - np.max(z_o) # to prevent overflow --- z_s = z stable
+
+            a_o = np.exp(z_s)/np.sum(np.exp(z_s), axis = 0) 
+            return z_h, a_h, z_o, a_o
 
         def loss(self, y_pred, y_true):
             cost = np.sum((y_pred-y_true)**2, axis = 0)
@@ -53,15 +56,18 @@ class NeuralNetwork:
                 for j in range(n):
                     if i == j:
                         # diagonals
-                        self.j_m[i, j] = s[i]*(1-s[i])
+                        j_m[i, j] = s[i]*(1-s[i])
                     else:
                         # off-diagonal
-                        self.j_m[i, j] = s[i]*(-s[j])
+                        j_m[i, j] = s[i]*(-s[j])
+            return j_m
 
-        def derivatives(self): # also other vars but i ain't putting em in yet because i'm Like that
+        def derivatives(self, z_h, a_h, z_o, a_o, x, y_true, j_m): # also other vars but i ain't putting em in yet because i'm Like that
+            w2 = self.weights_hidden_output
+
             d_relu = (z_h > 0) * 1
 
-            dc_w2 = np.dot(a_h.T, np.dot(j_m, 2*(a_o-y_true)))# derivative of cost function wrt weight 2
+            dc_w2 = np.outer(a_h, 2 * (a_o - y_true))# derivative of cost function wrt weight 2
             # this basically does: a_h * j_m * 2(a_o-y_true)---checks out if you wanna do the calc. i transposed a_h because it's in the wrong shape otherwise.
             dc_b2 = np.sum(np.dot(j_m, 2*(a_o-y_true)), axis = 0) # derivative of cost function with respect to bias 2
 
@@ -69,42 +75,65 @@ class NeuralNetwork:
             #w2*a_h*j_m*2(a_o-y_true) 
 
             # derivative of cost function with respect to weight 1
-            dc_w1 = np.dot(x.T, d_relu*dc_a_h)
+            dc_w1 = np.outer(x, d_relu*dc_a_h)
 
             # derivative of cost function with respect to bias 1
             dc_b1 = np.sum(d_relu*dc_a_h)
-        
-        def update_vars(self)
-            self.weights_hidden_output = -0.1*dc_w2
-            self.biases_hidden_output = -0.1*dc_b2
-            self.weights_input_hidden = -0.1*dc_w1
-            self.biases_input_hidden = -0.1*dc_b1
 
-        def accuraccy(self, a_o, y_true)
-            predictions = np.argmax(a_o)
+            return dc_w2, dc_b2, dc_w1, dc_b1
+        
+        def update_vars(self, dc_w2, dc_b2, dc_w1, dc_b1, a):
+            self.weights_hidden_output += -(a*dc_w2)
+            self.biases_hidden_output += -(a*dc_b2)
+            self.weights_input_hidden += -(a*dc_w1)
+            self.biases_input_hidden += -(a*dc_b1)
+
+        def accuraccy(self, a_o, y_true):
+            predictions = np.argmax(a_o, axis = 0)
             accuraccy = np.sum(predictions == y_true) / y_true.size
+            return accuraccy
 
 nn = NeuralNetwork()
 
 # z=nn.forward(10)
 # print(z)
 
-# somenumberidk = 3
+ex_plot = list()
+ey_plot = list()
+somenumberidk = 5
+sumloss = 0
+learning_rate = 0.01
 
-# for epoch in range(somenumberidk):
-#     sumloss = 0
-#     for i in range(len(train_img)):
+for epoch in range(somenumberidk):
+    sumloss = 0
+    epoch_accuracy = 0  
+    learning_rate *= 0.9
+    for i in range(len(train_img)):
         
-#         x = train_img[i]
-#         y = int(train_lbl[i])
+        x = train_img[i]
+        y = int(train_lbl[i])
 
-#         y_pred = nn.forward(x)
-#         y_true = nn.hot_encode(y)
+        z_h, a_h, z_o, a_o = nn.forward(x)
+        j_m = nn.softmax_derivative(a_o)
 
-#         loss = nn.loss(y_pred, y_true)
-#         sumloss += loss
+        y_pred = a_o
+        y_true = nn.hot_encode(y)
 
-#         # add backprop stuff
+        loss = nn.loss(y_pred, y_true)
+        sumloss += loss
 
-#     print(f"Epoch {epoch+1}/{somenumberidk}, cost: {sumloss/len(train_img)}")
+        dc_w2, dc_b2, dc_w1, dc_b1 = nn.derivatives(z_h, a_h, z_o, a_o, x, y_true, j_m)
 
+        nn.update_vars(dc_w2, dc_b2, dc_w1, dc_b1, learning_rate)
+
+        if np.argmax(y_pred) == np.argmax(y_true):  
+            epoch_accuracy += 1
+    epoch_accuracy = epoch_accuracy/len(train_img)
+
+    ex_plot.append(epoch+1)
+    ey_plot.append(epoch_accuracy)
+
+    print(f"Epoch {epoch+1}/{somenumberidk}, accuracy: {epoch_accuracy}.") # loss: {sumloss/len(train_img)},
+
+print(ex_plot)
+print(ey_plot)
