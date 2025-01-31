@@ -137,3 +137,14 @@ for epoch in range(somenumberidk):
 
 print(ex_plot)
 print(ey_plot)
+
+plt.scatter(ex_plot, ey_plot)
+plt.title("ACCURACCY OVER EPOCHS")
+plt.show()
+
+np.savez('model_params.npz', 
+         weights_input_hidden=nn.weights_input_hidden, 
+         biases_input_hidden=nn.biases_input_hidden, 
+         weights_hidden_output=nn.weights_hidden_output, 
+         biases_hidden_output=nn.biases_hidden_output)
+print("Model Params Saved")
