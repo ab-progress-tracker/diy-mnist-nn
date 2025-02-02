@@ -10,4 +10,6 @@ I had to use all my braincells for this one, but I also got understanding from t
   
   Derivative of Softmax (i didn't actually understand this one, and instead scrolled to the bottom and translated that into python) [https://mmuratarat.github.io/2019-01-27/derivation-of-softmax-function]
 
+-AB
+
 Completed 31/01/25
